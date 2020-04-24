@@ -16,9 +16,9 @@ import simpledb.opt.HeuristicQueryPlanner;
  * @author Edward Sciore
  */
 public class SimpleDB {
-   public static int BLOCK_SIZE = 400;
-   public static int BUFFER_SIZE = 8;
-   public static String LOG_FILE = "simpledb.log";
+   private static final int BLOCK_SIZE = 400;
+   private static final int BUFFER_SIZE = 8;
+   private static final String LOG_FILE = "simpledb.log";
 
    private  FileMgr     fm;
    private  BufferMgr   bm;
@@ -29,14 +29,14 @@ public class SimpleDB {
    /**
     * A constructor useful for debugging.
     * @param dirname the name of the database directory
-    * @param blocksize the block size
-    * @param buffsize the number of buffers
+    * @param blockSize the block size
+    * @param buffSize the number of buffers
     */
-   public SimpleDB(String dirname, int blocksize, int buffsize) {
+   public SimpleDB(String dirname, int blockSize, int buffSize) {
       File dbDirectory = new File("data" + File.separator +  dirname);
-      fm = new FileMgr(dbDirectory, blocksize);
+      fm = new FileMgr(dbDirectory, blockSize);
       lm = new LogMgr(fm, LOG_FILE);
-      bm = new BufferMgr(fm, lm, buffsize); 
+      bm = new BufferMgr(fm, lm, buffSize);
    }
    
    /**
@@ -47,14 +47,14 @@ public class SimpleDB {
    public SimpleDB(String dirname) {
       this(dirname, BLOCK_SIZE, BUFFER_SIZE); 
       Transaction tx = newTx();
-      boolean isnew = fm.isNew();
-      if (isnew)
+      boolean isNew = fm.isNew();
+      if (isNew) {
          System.out.println("creating new database");
-      else {
+      } else {
          System.out.println("recovering existing database");
          tx.recover();
       }
-      mdm = new MetadataMgr(isnew, tx);
+      mdm = new MetadataMgr(isNew, tx);
       QueryPlanner qp = new BasicQueryPlanner(mdm);
       UpdatePlanner up = new BasicUpdatePlanner(mdm);
 //    QueryPlanner qp = new HeuristicQueryPlanner(mdm);
